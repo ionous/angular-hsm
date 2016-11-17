@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+   <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../hsm/hsmService.js"></script>
+  <script src="../hsm/hsmDirectives.js"></script>
+  <!-- -->
+  <script src="samek_plus.js"></script>
+  <style TYPE="text/css">
+  hsm-state {
+    margin-left: 1em;
+    display: block;
+  }
+  
+  .highlight {
+    color: red;
+  }
+  </style>
+</head>
+
+<body ng-app="hsm">
+  <div hsm-log="logger">
+    <hsm-machine name="machine" hsm-transition="trans($source,$target)" hsm-enter="enter($state)" hsm-exit="exit($state)" hsm-init="init($state)">
+      <div ng-controller="SamekPlus as plus">
+        <form action="">
+          <input ng-repeat="evt in ['a','b','c','d','e','f','g','h','i','x','y']" type="button" ng-value="evt" ng-click="plus.click(evt)">
+          <ul>
+            <li>from default settings 'f' then 'h' sets value.</li>
+            <li>'c' and 'f' toggle between s1 and s2 with different default states.</li>
+            <li>'h' toggles between sx1 and sx2.</li>
+            <li>'x' self transitions sx.</li>
+            <li>'y' transitions from sx into an s1 or s2 substate.</li>
+          </ul>
+        </form>
+        value: {{ plus.value }}
+        <hsm-state name="s0">
+          <hsm-event on="e" goto="s211"></hsm-event>
+          <hsm-event on="i" goto="s12"></hsm-event>
+          {{hsmState.name}}
+          <span highlighter="hsmState.active">{{hsmState.active}}</span>
+          <hsm-state name="s1">
+            <hsm-event on="a" goto="s1"></hsm-event>
+            <hsm-event on="b" goto="s11"></hsm-event>
+            <hsm-event on="c" goto="s2"></hsm-event>
+            <hsm-event on="d" goto="s0"></hsm-event>
+            <hsm-event on="f" goto="s211"></hsm-event>
+            {{hsmState.name}}
+            <span highlighter="hsmState.active">{{hsmState.active}}</span>
+            <!-- default state is s11 -->
+            <hsm-state name="s11">
+              <hsm-event on="g" goto="s211"></hsm-event>
+              <hsm-event on="y" goto="sx2"></hsm-event>
+              <hsm-event on="h" when="plus.value" run="plus.set(0)"></hsm-event>
+              {{hsmState.name}}
+              <span highlighter="hsmState.active">{{hsmState.active}}</span>
+            </hsm-state>
+            <hsm-state name="s12">
+              <hsm-event on="y" goto="sx"></hsm-event>
+              {{hsmState.name}}
+              <span highlighter="hsmState.active">{{hsmState.active}}</span>
+            </hsm-state>
+          </hsm-state>
+          <hsm-state name="s2" parallel="true">
+            <hsm-event on="c" goto="s1"></hsm-event>
+            <hsm-event on="f" goto="s11"></hsm-event>
+            {{hsmState.name}} {{hsmState.active ? 'parallel' : 'false' }}
+            <hsm-state name="s21">
+              <hsm-event on="b" goto="s211"></hsm-event>
+              <hsm-event on="h" when="!plus.value" run="plus.set(1)"></hsm-event>
+              {{hsmState.name}}
+              <span highlighter="hsmState.active">{{hsmState.active}}</span>
+              <hsm-state name="s211">
+                <hsm-event on="d" goto="s21"></hsm-event>
+                <hsm-event on="g" goto="s0"></hsm-event>
+                {{hsmState.name}}
+                <span highlighter="hsmState.active">{{hsmState.active}}</span>
+              </hsm-state>
+            </hsm-state>
+            <hsm-state name="sx">
+              <hsm-event on="x" goto="sx"></hsm-event>
+              {{hsmState.name}}
+              <span highlighter="hsmState.active">{{hsmState.active}}</span>
+              <hsm-state name="sx1">
+                <hsm-event on="y" goto="s11"></hsm-event>
+                <hsm-event on="h" goto="sx2"></hsm-event>
+                {{hsmState.name}}
+                <span highlighter="hsmState.active">{{hsmState.active}}</span>
+              </hsm-state>
+              <hsm-state name="sx2">
+                <hsm-event on="y" goto="s0"></hsm-event>
+                <hsm-event on="h" goto="sx1"></hsm-event>
+                {{hsmState.name}}
+                <span highlighter="hsmState.active">{{hsmState.active}}</span>
+              </hsm-state>
+            </hsm-state>
+          </hsm-state>
+        </hsm-state>
+      </div>
+    </hsm-machine>
+  </div>
+</body>
+
+</html>

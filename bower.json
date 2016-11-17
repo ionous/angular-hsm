@@ -1,0 +1,25 @@
+{
+  "name": "angular-hsm",
+  "authors": [
+    "ionous <github@ionous.net>"
+  ],
+  "description": "hierarchical state machine ( statechart ) directives for angularjs.",
+  "main": "hsm/hsmService.js",
+  "keywords": [
+    "angular",
+    "statechart",
+    "state machine",
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ionous/angular-hsm",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "angularjs#^1.5.8"
+  }
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <script src="../bower_components/angular/angular.min.js"></script>
+  <script src="../hsm/hsmService.js"></script>
+  <script src="../hsm/hsmDirectives.js"></script>
+  <!-- -->
+  <script src="samek_plus.js"></script>
+  <style TYPE="text/css">
+  hsm-state {
+    margin-left: 1em;
+    display: block;
+  }
+  </style>
+</head>
+
+<body ng-app="hsm" hsm-log="logger" hsm-machine="machine" hsm-transition="logger.trans($source,$target)" hsm-enter="logger.enter($state)" hsm-exit="logger.exit($state)" hsm-init="logger.init($state)" >
+  <div ng-controller="SamekPlus as plus">
+    <form action="">
+      <input ng-repeat="evt in ['a','b','c','d','e','f','g','h','i']" type="button" ng-value="evt" ng-click="plus.click(evt)">
+      <ul>
+        <li>from default settings 'f' then 'h' sets value.</li>
+        <li>'c' and 'f' toggle between s1 and s2 with different default states.</li>
+      </ul>
+    </form>
+    value: {{ plus.value }}
+    <hsm-state name="s0">
+      <hsm-event on="e" goto="s211"></hsm-event>
+      <hsm-event on="i" goto="s12"></hsm-event>
+      {{hsmState.name}} {{hsmState.active}}
+      <hsm-state name="s1">
+        <hsm-event on="a" goto="s1"></hsm-event>
+        <hsm-event on="b" goto="s11"></hsm-event>
+        <hsm-event on="c" goto="s2"></hsm-event>
+        <hsm-event on="d" goto="s0"></hsm-event>
+        <hsm-event on="f" goto="s211"></hsm-event>
+        {{hsmState.name}} {{hsmState.active}}
+        <!-- default state is s11 -->
+        <hsm-state name="s11">
+          <hsm-event on="g" goto="s211"></hsm-event>
+          <hsm-event on="h" when="plus.value" run="plus.set(0)"></hsm-event>
+          {{hsmState.name}} {{hsmState.active}}
+        </hsm-state>
+        <hsm-state name="s12">
+          {{hsmState.name}} {{hsmState.active}}
+        </hsm-state>
+      </hsm-state>
+      <hsm-state name="s2">
+        <hsm-event on="c" goto="s1"></hsm-event>
+        <hsm-event on="f" goto="s11"></hsm-event>
+        {{hsmState.name}} {{hsmState.active}}
+        <br>
+        <hsm-state name="s21">
+          <hsm-event on="b" goto="s211"></hsm-event>
+          <hsm-event on="h" when="!plus.value" run="plus.set(1)"></hsm-event>
+          {{hsmState.name}} {{hsmState.active}}
+          <hsm-state name="s211">
+            <hsm-event on="d" goto="s21"></hsm-event>
+            <hsm-event on="g" goto="s0"></hsm-event>
+            {{hsmState.name}} {{hsmState.active}}
+          </hsm-state>
+        </hsm-state>
+      </hsm-state>
+    </hsm-state>
+  </div>
+</body>
+
+</html>
